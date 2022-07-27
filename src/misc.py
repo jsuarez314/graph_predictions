@@ -2,12 +2,12 @@ import pylab as pl
 import numpy as np
 import os
 
-def Beta_sk(points):
+def Beta_sk(points, beta, nnb):
     inputfile  = './data/pos.tmp'
     np.savetxt(f'{inputfile}', points, fmt='%f %f %f')
     outputfile = 'posbsk.tmp'
     os.system('cd /pscratch/sd/j/jfsuarez/ALIGN/graph_pred/')
-    command = f'sh ./src/run_BSK.sh {inputfile} ../data/{outputfile} 1.0'
+    command = f'sh ./src/run_BSK.sh {inputfile} ../data/{outputfile} {beta} {nnb}'
     os.system(command)
     rm = f'rm  {inputfile}'
     return np.loadtxt(f'./data/{outputfile}.BSKIndex', dtype=int)
@@ -80,7 +80,7 @@ def topological_features(points, pairs):
         for idc in ID_CONNECTIONS[n]:
             temp_dis.append(distance(points[n], points[idc]))
             first_neigh = find_connections(pairs, idc)
-            first_neigh = first_neigh[first_neigh!=n]
+            first_neigh = first_neigh[first_neigh!=n] #dismiss first neigh loops in the graphs
             # first_neigh = np.array(list(set(first_neigh) - set(zero_neigh)))
             temp_first_neigh.append(first_neigh)
             # for idn in first_neigh:
